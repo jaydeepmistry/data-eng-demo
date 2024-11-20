@@ -23,6 +23,12 @@ services:
       - postgres
     networks:
       - airflow_net
+    command: >
+      bash -c "
+      airflow db upgrade &&
+      airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com ||
+      echo 'Admin user already exists'
+      "
 
   postgres:
     image: postgres:13
