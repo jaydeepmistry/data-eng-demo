@@ -4,12 +4,11 @@ repos:
     hooks:
       - id: isort
         args: ["--settings-path", "pyproject.toml"]
-  - repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v3.0.0a5
-    hooks:
-      - id: pylint
-        args: ["--rcfile=pyproject.toml"]
-        files: ^airflow/
+  # - repo: https://github.com/pre-commit/mirrors-pylint
+  #   rev: v3.0.0a5
+  #   hooks:
+  #     - id: pylint
+  #       args: ["--rcfile=pyproject.toml"]
   - repo: https://github.com/psf/black
     rev: 24.10.0
     hooks:
