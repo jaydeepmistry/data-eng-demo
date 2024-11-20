@@ -1,15 +1,13 @@
 import os
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
-from airflow.operators.python_operator import (
-    PythonOperator,  # pylint: disable=import-error; type: ignore[attr-defined]
-)
+from airflow.operators.python_operator import PythonOperator  # type: ignore[attr-defined]
 
-from airflow import DAG  # type: ignore[attr-defined] # pylint: disable=import-error
+from airflow import DAG  # type: ignore[attr-defined]
 
-default_args: dict[str, Any] = {
+default_args: Dict[str, Any] = {
     "owner": "airflow",
     "start_date": datetime(2023, 1, 1),
     "retries": 1,
@@ -23,7 +21,7 @@ def extract_data() -> None:
     os.makedirs("/opt/airflow/dags/data", exist_ok=True)
 
     # Simulate extracting advertising data from a source
-    data: dict[str, list[Any]] = {
+    data: Dict[str, list[Any]] = {
         "Date": ["2023-01-01", "2023-01-02", "2023-01-03"],
         "Clicks": [100, 150, 200],
         "Impressions": [1000, 1500, 2000],
