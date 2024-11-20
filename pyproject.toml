@@ -4,7 +4,7 @@ line_length = 100
 
 [tool.pylint]
 max-line-length = 100
-disable = ["C0114", "C0115", "C0116", "E0401", "W0104"]
+disable = ["C0114", "C0115", "C0116", "E0401", "W0104", "import-error"]
 
 [tool.mypy]
 python_version = "3.13"
