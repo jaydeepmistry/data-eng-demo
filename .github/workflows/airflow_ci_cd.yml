@@ -19,11 +19,11 @@ jobs:
       - name: Build Docker Image
         run: docker build -t airflow-server .
 
-    #   - name: Push Docker Image to Google Container Registry
-    #     run: |
-    #       echo ${{ secrets.GCLOUD_AUTH_TOKEN }} | docker login -u _json_key --password-stdin https://gcr.io
-    #       docker tag airflow-server gcr.io/your-project-id/airflow-server:latest
-    #       docker push gcr.io/your-project-id/airflow-server:latest
+      - name: Push Docker Image to Google Container Registry
+        run: |
+          echo ${{ secrets.GCLOUD_AUTH_TOKEN }} | docker login -u _json_key --password-stdin https://gcr.io
+          docker tag airflow-server gcr.io/your-project-id/airflow-server:latest
+          docker push gcr.io/your-project-id/airflow-server:latest
 
     #   - name: Deploy to Google Cloud
     #     run: |
