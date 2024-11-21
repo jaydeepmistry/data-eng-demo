@@ -10,8 +10,9 @@ The project simulates a real-world data pipeline where advertising data is extra
 
 ```
 .
-├── Dockerfile
+├── .pre-commit-config.yaml
 ├── docker-compose.yml
+├── Dockerfile
 ├── pyproject.toml
 ├── airflow
 │   ├── dags
