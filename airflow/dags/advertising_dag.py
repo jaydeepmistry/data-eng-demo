@@ -16,7 +16,11 @@ default_args: Dict[str, Any] = {
 }
 
 
-def extract_data() -> None:
+def extract_data(**kwargs: Dict[str, Any]) -> None:
+    # Log the execution date
+    execution_date = kwargs["execution_date"]
+    print(f"Running for execution date: {execution_date}")
+
     # Ensure the directory exists
     os.makedirs("/opt/airflow/dags/data", exist_ok=True)
 
@@ -30,7 +34,11 @@ def extract_data() -> None:
     df.to_csv("/opt/airflow/dags/data/advertising.csv", index=False)
 
 
-def process_data() -> None:
+def process_data(**kwargs: Dict[str, Any]) -> None:
+    # Log the execution date
+    execution_date = kwargs["execution_date"]
+    print(f"Running for execution date: {execution_date}")
+
     df: pd.DataFrame = pd.read_csv("/opt/airflow/dags/data/advertising.csv")
     df["CTR"] = df["Clicks"] / df["Impressions"] * 100
     df.to_csv("/opt/airflow/dags/data/processed_advertising.csv", index=False)
@@ -40,11 +48,11 @@ with DAG(
     "advertising_dag", default_args=default_args, schedule_interval="@daily", catchup=False
 ) as dag:
     extract_task: PythonOperator = PythonOperator(
-        task_id="extract_data", python_callable=extract_data
+        task_id="extract_data", python_callable=extract_data, provide_context=True
     )
 
     process_task: PythonOperator = PythonOperator(
-        task_id="process_data", python_callable=process_data
+        task_id="process_data", python_callable=process_data, provide_context=True
     )
 
     extract_task >> process_task
