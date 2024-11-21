@@ -1,0 +1,32 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: docker build -t airflow-server .
+
+    #   - name: Push Docker Image to Google Container Registry
+    #     run: |
+    #       echo ${{ secrets.GCLOUD_AUTH_TOKEN }} | docker login -u _json_key --password-stdin https://gcr.io
+    #       docker tag airflow-server gcr.io/your-project-id/airflow-server:latest
+    #       docker push gcr.io/your-project-id/airflow-server:latest
+
+    #   - name: Deploy to Google Cloud
+    #     run: |
+    #       gcloud auth activate-service-account --key-file ${{ secrets.GCLOUD_SA_KEY }}
+    #       gcloud container clusters get-credentials airflow-cluster --zone your-zone --project your-project-id
+    #       kubectl apply -f k8s-deployment.yaml
