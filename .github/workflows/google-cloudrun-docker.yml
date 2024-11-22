@@ -63,6 +63,11 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
+      - name: 'Verify gcloud Authentication' 
+        run: | 
+          gcloud auth list 
+          gcloud config list
+
       # BEGIN - Docker auth and build
       #
       # If you already have a container image, you can omit these steps.
