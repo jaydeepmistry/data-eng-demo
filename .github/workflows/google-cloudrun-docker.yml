@@ -39,8 +39,9 @@ env:
   PROJECT_ID: 'crawler101' # TODO: update to your Google Cloud project ID
   REGION: 'us-central1' # TODO: update to your region
   SERVICE: 'airflow' # TODO: update to your service name
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/98173494074/locations/global/workloadIdentityPools/github/providers/my-repo' # TODO: update to your workload identity provider
+  # WORKLOAD_IDENTITY_PROVIDER: 'projects/98173494074/locations/global/workloadIdentityPools/github/providers/my-repo' # TODO: update to your workload identity provider
   IMAGE_NAME: 'airflow'
+  GAR_LOCATION: us-central1-docker.pkg.dev/crawler101/airflow/
 
 jobs:
   deploy:
@@ -58,11 +59,22 @@ jobs:
       #
       # See https://github.com/google-github-actions/auth for more options,
       # including authenticating via a JSON credentials file.
-      - id: 'auth'
+      # - id: 'auth'
+      #   name: 'Authenticate to Google Cloud'
+      #   uses: 'google-github-actions/auth@v2'
+      #   with:
+      #     credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      - id: "auth"
         name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v2'
+        uses: "google-github-actions/auth@v1"
         with:
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+      
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+  
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
 
       - name: 'Verify gcloud Authentication' 
         run: | 
@@ -72,12 +84,17 @@ jobs:
       # BEGIN - Docker auth and build
       #
       # If you already have a container image, you can omit these steps.
-      - name: 'Docker Auth'
-        uses: 'docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567' # docker/login-action@v3
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.auth_token }}'
-          registry: '${{ env.REGION }}-docker.pkg.dev'
+      # - name: 'Docker Auth'
+      #   uses: 'docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567' # docker/login-action@v3
+      #   with:
+      #     username: 'oauth2accesstoken'
+      #     password: '${{ steps.auth.outputs.auth_token }}'
+      #     registry: '${{ env.REGION }}-docker.pkg.dev'
+
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: 'Build and Push Container'
         run: |-
