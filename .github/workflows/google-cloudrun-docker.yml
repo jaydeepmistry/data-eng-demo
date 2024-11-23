@@ -37,9 +37,10 @@ on:
 
 env:
   PROJECT_ID: 'crawler101' # TODO: update to your Google Cloud project ID
-  REGION: 'global' # TODO: update to your region
-  SERVICE: 'my-service' # TODO: update to your service name
+  REGION: 'us-central1' # TODO: update to your region
+  SERVICE: 'airflow' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: 'projects/98173494074/locations/global/workloadIdentityPools/github/providers/my-repo' # TODO: update to your workload identity provider
+  IMAGE_NAME: 'airflow'
 
 jobs:
   deploy:
@@ -80,7 +81,7 @@ jobs:
 
       - name: 'Build and Push Container'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
@@ -91,9 +92,9 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          # NOTE: If using a pre-built image, update the image name below:
+          # NOTE: If using a pre-built image, updaßßte the image name below:
 
-          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}'
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
       # If required, use the Cloud Run URL output in later steps
       - name: 'Show output'
         run: |2-
