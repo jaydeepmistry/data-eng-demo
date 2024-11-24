@@ -64,22 +64,29 @@ jobs:
       #   uses: 'google-github-actions/auth@v2'
       #   with:
       #     credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      # - id: "auth" # working auto
+      #   name: 'Authenticate to Google Cloud'
+      #   uses: "google-github-actions/auth@v1"
+      #   with:
+      #     credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
       - id: "auth"
-        name: 'Authenticate to Google Cloud'
-        uses: "google-github-actions/auth@v1"
+        name: "Authenticate to Google Cloud"
+        uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
-      
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v1"
-  
-      - name: "Use gcloud CLI"
-        run: "gcloud info"
+          workload_identity_provider: "projects/98173494074/locations/global/workloadIdentityPools/github-demo-pool/providers/github"
+          service_account: "github-wif@crawler101.iam.gserviceaccount.com"
+
+      - name: Verify gcloud Connection
+        run: gcloud info
 
       - name: 'Verify gcloud Authentication' 
         run: | 
           gcloud auth list 
           gcloud config list
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
 
       # BEGIN - Docker auth and build
       #
@@ -90,7 +97,6 @@ jobs:
       #     username: 'oauth2accesstoken'
       #     password: '${{ steps.auth.outputs.auth_token }}'
       #     registry: '${{ env.REGION }}-docker.pkg.dev'
-
 
       - name: "Docker auth"
         run: |-
