@@ -28,18 +28,18 @@
 # 3. Change the values in the "env" block to match your values.
 
 name: 'Build and Deploy to Cloud Run'
-
 on:
-  push:
-    branches:
-      - '"main"'
-  workflow_dispatch: # Add this line to enable manual trigger
+  # push:
+  #   branches:
+  #     - '"main"'
+  workflow_dispatch: # Enables manual trigger
 
 env:
   PROJECT_ID: 'crawler101' # TODO: update to your Google Cloud project ID
   REGION: 'us-central1' # TODO: update to your region
   SERVICE: 'airflow' # TODO: update to your service name
-  # WORKLOAD_IDENTITY_PROVIDER: 'projects/98173494074/locations/global/workloadIdentityPools/github/providers/my-repo' # TODO: update to your workload identity provider
+  WORKLOAD_IDENTITY_PROVIDER: "projects/98173494074/locations/global/workloadIdentityPools/github-demo-pool/providers/github"
+  SERVICE_ACCOUNT: "github-wif@crawler101.iam.gserviceaccount.com"
   IMAGE_NAME: 'airflow'
   GAR_LOCATION: us-central1-docker.pkg.dev/crawler101/airflow/
 
@@ -74,8 +74,8 @@ jobs:
         name: "Authenticate to Google Cloud"
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "projects/98173494074/locations/global/workloadIdentityPools/github-demo-pool/providers/github"
-          service_account: "github-wif@crawler101.iam.gserviceaccount.com"
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.SERVICE_ACCOUNT }}'
 
       - name: Verify gcloud Connection
         run: gcloud info
@@ -107,19 +107,16 @@ jobs:
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
-      - name: 'Deploy to Cloud Run'
 
-        # END - Docker auth and build
+      # - name: 'Deploy to Cloud Run'
+      #   uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
+      #   with:
+      #     service: '${{ env.SERVICE }}'
+      #     region: '${{ env.REGION }}'
+      #     # NOTE: If using a pre-built image, updaßßte the image name below:
+      #     image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
+      # # If required, use the Cloud Run URL output in later steps
 
-        uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
-        with:
-          service: '${{ env.SERVICE }}'
-          region: '${{ env.REGION }}'
-          # NOTE: If using a pre-built image, updaßßte the image name below:
-
-          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
-      # If required, use the Cloud Run URL output in later steps
       - name: 'Show output'
         run: |2-
-
           echo ${{ steps.deploy.outputs.url }}
