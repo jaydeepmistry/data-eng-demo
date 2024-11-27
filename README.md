@@ -36,8 +36,9 @@ The project simulates a real-world data pipeline where advertising data is extra
 
 ### Prerequisites
 
-- Docker
-- Docker Compose
+- Python 3.12
+   - We use version 3.12 because it is the latest [supported version](https://devguide.python.org/versions/#supported-versions) for both [Airflow](prerequisites) and [Google Cloud](https://cloud.google.com/python/docs/supported-python-versions).
+- [Docker](https://www.docker.com/products/docker-desktop/)
 
 ### Setup
 
