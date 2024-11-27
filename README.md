@@ -56,9 +56,7 @@ The project simulates a real-world data pipeline where advertising data is extra
 
 3. **Access Airflow**:
    - Open your browser and go to `http://localhost:8080`.
-   - Log in with the default credentials:
-     - Username: `admin`
-     - Password: `admin`
+   - Log in using the Admin account from `airflow/scripts/init.sh`
 
 ### Running the DAG
 
